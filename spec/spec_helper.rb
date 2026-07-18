@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "stringio"
+
 require "active_record"
 require "query_explainer"
 

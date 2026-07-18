@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "active_support/notifications"
 
 require_relative "query_explainer/version"
 require_relative "query_explainer/explainer"

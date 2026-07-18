@@ -6,10 +6,14 @@ require "niceql"
 module QueryExplainer
   # Renders an explained query and its warnings as a bordered table.
   class Formatter
-    attr_reader :logger
-
-    def initialize(logger)
+    def initialize(logger = nil)
       @logger = logger
+    end
+
+    # Resolved late: under Rails the Railtie subscribes during boot, so a host
+    # setting QueryExplainer.logger always does so after this was constructed.
+    def logger
+      @logger || QueryExplainer.logger
     end
 
     def log(explainer)

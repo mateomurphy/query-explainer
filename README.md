@@ -48,11 +48,25 @@ had to sort or buffer rows itself (`Using filesort`, `Using temporary`).
 Repeated queries are reported once. Literals are collapsed before comparing, so
 an N+1 across 100 rows prints one table, not 100.
 
-### Outside Rails
+### Configuring the logger
+
+Warnings go to `$stdout`. To send them elsewhere:
 
 ```ruby
-QueryExplainer.subscribe
 QueryExplainer.logger = MyLogger.new
+```
+
+### Without Rails
+
+Rails is not required, but ActiveRecord is — the gem explains the queries
+ActiveRecord emits, and reads them from ActiveSupport notifications. All Rails
+itself adds is a Railtie that calls `subscribe` for you. Without it, subscribe
+by hand and skip the `EXPLAIN_QUERIES` check if you want it always on:
+
+```ruby
+require "query_explainer"
+
+QueryExplainer.subscribe if QueryExplainer.enabled?
 ```
 
 ## Development

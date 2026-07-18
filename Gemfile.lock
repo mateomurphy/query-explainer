@@ -3,6 +3,7 @@ PATH
   specs:
     query_explainer (0.1.0)
       activerecord (>= 7.0)
+      activesupport (>= 7.0)
       niceql (~> 0.6)
       terminal-table (~> 4.0)
 

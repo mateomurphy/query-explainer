@@ -60,6 +60,16 @@ RSpec.describe QueryExplainer::Subscriber do
     expect(logged.size).to eq(2)
   end
 
+  it "picks up a logger assigned after it was built" do
+    subscriber = described_class.new
+    custom = Logger.new(StringIO.new)
+    QueryExplainer.logger = custom
+
+    expect(subscriber.formatter.logger).to be(custom)
+  ensure
+    QueryExplainer.logger = nil
+  end
+
   it "swallows errors so it cannot break the query it is observing" do
     expect { subscriber.call(event("SELECT * FROM table_that_does_not_exist")) }
       .not_to raise_error

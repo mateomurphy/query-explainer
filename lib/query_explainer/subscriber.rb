@@ -11,7 +11,7 @@ module QueryExplainer
 
     attr_reader :formatter
 
-    def initialize(formatter: Formatter, logger: QueryExplainer.logger)
+    def initialize(formatter: Formatter, logger: nil)
       @formatter = formatter.new(logger)
       @seen = Set.new
       @mutex = Mutex.new
