@@ -1,43 +1,73 @@
-# Query::Explainer
+# QueryExplainer
 
-TODO: Delete this and the text below, and describe your gem
+Finds missing indexes by running `EXPLAIN` on the queries your app actually
+makes, and logging the ones MySQL had to resolve without a usable index.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/query/explainer`. To experiment with that code, run `bin/console` for an interactive prompt.
+```
+┌────────────────────────────────────────┐
+│ SELECT `bios`.*                        │
+│   FROM `bios`                          │
+│   ORDER BY `bios`.`created_at` ASC     │
+│   LIMIT 3                              │
+│ 0.3736 ms                              │
+│ bios: Using filesort, No possible keys │
+└────────────────────────────────────────┘
+```
+
+Unlike static analysis, this only reports indexes missing on paths your code
+really exercises, with the query that got there.
+
+MySQL only — it parses MySQL's `EXPLAIN` output format.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+group :development do
+  gem "query_explainer"
+end
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
+Keep it in the `:development` group. Explaining every query doubles the queries
+the database sees, and the gem is not built for production traffic.
 
 ## Usage
 
-TODO: Write usage instructions here
+Set `EXPLAIN_QUERIES` and start your app:
+
+```bash
+EXPLAIN_QUERIES=1 bin/rails server
+```
+
+A Railtie subscribes automatically, so there is nothing to add to an
+initializer. Exercise the pages you care about and watch the log.
+
+A query is reported when it is a `SELECT` and `EXPLAIN` says MySQL either had no
+index available (`No possible keys`), had one but did not use it (`No key`), or
+had to sort or buffer rows itself (`Using filesort`, `Using temporary`).
+
+Repeated queries are reported once. Literals are collapsed before comparing, so
+an N+1 across 100 rows prints one table, not 100.
+
+### Outside Rails
+
+```ruby
+QueryExplainer.subscribe
+QueryExplainer.logger = MyLogger.new
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Specs run against real MySQL, since parsing real `EXPLAIN` output is the whole
+job. Point them at a server with `DB_HOST`, `DB_PORT`, `DB_USERNAME`,
+`DB_PASSWORD` and `DB_NAME`; the defaults match a local Docker MySQL. The
+`query_explainer_test` database and its schema are created for you.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/query-explainer. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/query-explainer/blob/main/CODE_OF_CONDUCT.md).
+```bash
+bin/setup
+bundle exec rspec
+bundle exec rubocop
+```
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Query::Explainer project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/query-explainer/blob/main/CODE_OF_CONDUCT.md).
+Available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

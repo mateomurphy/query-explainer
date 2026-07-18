@@ -6,3 +6,8 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+# describe blocks are naturally long
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
