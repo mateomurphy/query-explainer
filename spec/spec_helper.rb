@@ -10,7 +10,7 @@ DB_CONNECTION = {
   host: ENV.fetch("DB_HOST", "127.0.0.1"),
   port: Integer(ENV.fetch("DB_PORT", "3306")),
   username: ENV.fetch("DB_USERNAME", "root"),
-  password: ENV.fetch("DB_PASSWORD", "proton")
+  password: ENV.fetch("DB_PASSWORD", "root")
 }.freeze
 
 DB_NAME = ENV.fetch("DB_NAME", "query_explainer_test")
