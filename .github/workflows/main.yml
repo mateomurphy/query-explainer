@@ -15,8 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-          # 3.2 is the floor in the gemspec, 3.4 is what the consuming app runs
-          - '3.2'
+          - '3.3'
           - '3.4'
           - '4.0'
         mysql:

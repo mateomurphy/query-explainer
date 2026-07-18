@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
     development use: explaining every query doubles the queries the database sees.
   DESC
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.3.0"
 
   # TODO: set homepage, source_code_uri, changelog_uri and allowed_push_host
   # once hosting is decided. Until then the gem is consumed via path:/git:.
