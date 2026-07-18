@@ -18,8 +18,13 @@ Gem::Specification.new do |spec|
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3.0"
 
-  # TODO: set homepage, source_code_uri, changelog_uri and allowed_push_host
-  # once hosting is decided. Until then the gem is consumed via path:/git:.
+  spec.homepage = "https://github.com/mateomurphy/query-explainer"
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+
+  # allowed_push_host is deliberately unset: the gem is consumed straight from
+  # git and has not been published. Set it before running `rake release`.
 
   gemspec = File.basename(__FILE__)
   spec.files = IO.popen(%w[git ls-files -z], chdir: __dir__, err: IO::NULL) do |ls|
